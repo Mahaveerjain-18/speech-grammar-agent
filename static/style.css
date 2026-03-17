@@ -1,0 +1,869 @@
+/* ------------------------------------------------------------------ */
+/* Design tokens                                                      */
+/* ------------------------------------------------------------------ */
+:root {
+  --bg-primary: #0a0e1a;
+  --bg-card: rgba(255, 255, 255, 0.04);
+  --bg-card-hover: rgba(255, 255, 255, 0.07);
+  --border-glass: rgba(255, 255, 255, 0.08);
+  --text-primary: #e8ecf4;
+  --text-secondary: #8b95a8;
+  --text-muted: #5a6378;
+  --accent: #6c5ce7;
+  --accent-light: #a78bfa;
+  --accent-glow: rgba(108, 92, 231, 0.35);
+  --error-color: #ff6b6b;
+  --error-bg: rgba(255, 107, 107, 0.1);
+  --warning-color: #feca57;
+  --warning-bg: rgba(254, 202, 87, 0.1);
+  --suggestion-color: #48dbfb;
+  --suggestion-bg: rgba(72, 219, 251, 0.1);
+  --success-color: #00d2d3;
+  --rec-color: #ff4757;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --font: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ------------------------------------------------------------------ */
+/* Reset & base                                                       */
+/* ------------------------------------------------------------------ */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* ------------------------------------------------------------------ */
+/* Animated background blobs                                          */
+/* ------------------------------------------------------------------ */
+.bg-blob {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.blob-1 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, #6c5ce7 0%, transparent 70%);
+  top: -150px;
+  left: -100px;
+  animation: float 18s ease-in-out infinite alternate;
+}
+
+.blob-2 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, #0984e3 0%, transparent 70%);
+  bottom: -100px;
+  right: -80px;
+  animation: float 22s ease-in-out infinite alternate-reverse;
+}
+
+.blob-3 {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, #00cec9 0%, transparent 70%);
+  top: 50%;
+  left: 60%;
+  animation: float 15s ease-in-out infinite alternate;
+}
+
+@keyframes float {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate(40px, -30px) scale(1.08);
+  }
+
+  100% {
+    transform: translate(-20px, 20px) scale(0.95);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Layout                                                             */
+/* ------------------------------------------------------------------ */
+main {
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 3rem 1.25rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ------------------------------------------------------------------ */
+/* Header                                                             */
+/* ------------------------------------------------------------------ */
+#app-header {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+.logo-icon {
+  font-size: 2.2rem;
+  animation: mic-bounce 2s ease-in-out infinite;
+}
+
+@keyframes mic-bounce {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.logo h1 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #6c5ce7, #48dbfb);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-top: 0.35rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* ------------------------------------------------------------------ */
+/* Glass card                                                         */
+/* ------------------------------------------------------------------ */
+.card.glass {
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  transition: background var(--transition), box-shadow var(--transition);
+}
+
+.card.glass:hover {
+  background: var(--bg-card-hover);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.card-header h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+/* ------------------------------------------------------------------ */
+/* Badge                                                              */
+/* ------------------------------------------------------------------ */
+.badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.badge.idle {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-secondary);
+}
+
+.badge.recording {
+  background: rgba(255, 71, 87, 0.15);
+  color: var(--rec-color);
+  animation: badge-pulse 1.2s ease-in-out infinite;
+}
+
+.badge.processing {
+  background: rgba(108, 92, 231, 0.15);
+  color: var(--accent);
+}
+
+.badge.done {
+  background: rgba(0, 210, 211, 0.12);
+  color: var(--success-color);
+}
+
+@keyframes badge-pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ================================================================== */
+/* RECORDER STAGE — the big visual centrepiece                        */
+/* ================================================================== */
+.recorder-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem 0 0.5rem;
+}
+
+/* ---- Ring wrapper (canvas + button overlay) ---- */
+.waveform-ring-wrap {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Circular glow behind when recording */
+.ring-glow {
+  position: absolute;
+  inset: -18px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.recording .ring-glow {
+  opacity: 1;
+  background: radial-gradient(circle, rgba(255, 71, 87, 0.25) 0%, transparent 70%);
+  animation: glow-breathe 2s ease-in-out infinite;
+}
+
+@keyframes glow-breathe {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+}
+
+/* Canvas for circular frequency bars */
+#waveform-ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* ---- Record button (centre of the ring) ---- */
+.btn-record {
+  position: relative;
+  z-index: 2;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(145deg, #6c5ce7, #a78bfa);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--transition), box-shadow var(--transition), background 0.4s ease;
+  box-shadow:
+    0 4px 24px var(--accent-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.btn-record:hover {
+  transform: scale(1.07);
+  box-shadow:
+    0 6px 40px var(--accent-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.btn-record:active {
+  transform: scale(0.96);
+}
+
+/* Pulse rings */
+.pulse-ring {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.btn-record.recording .pulse-ring {
+  animation: pulse-out 1.8s ease-out infinite;
+  border-color: var(--rec-color);
+}
+
+.btn-record.recording .pulse-ring.delay {
+  animation-delay: 0.6s;
+}
+
+@keyframes pulse-out {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: scale(1.7);
+    opacity: 0;
+  }
+}
+
+.btn-record.recording {
+  background: linear-gradient(145deg, #ff4757, #ff6b81);
+  box-shadow:
+    0 4px 24px rgba(255, 71, 87, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* Icon swap: mic ↔ stop */
+.btn-record.recording .mic-icon {
+  display: none;
+}
+
+.btn-record.recording .stop-icon {
+  display: flex !important;
+}
+
+/* ---- Timer + hint ---- */
+.recorder-info {
+  text-align: center;
+}
+
+.timer {
+  font-size: 2rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+  letter-spacing: 0.06em;
+  line-height: 1;
+  transition: color 0.3s;
+}
+
+.timer.recording-active {
+  color: var(--rec-color);
+}
+
+.recorder-hint {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 0.3rem;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+/* ---- Linear waveform bars ---- */
+.waveform-bar-wrap {
+  margin-top: 0.25rem;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+#waveform-bars {
+  display: block;
+  width: 100%;
+  height: 56px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Result text                                                        */
+/* ------------------------------------------------------------------ */
+.result-text {
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: var(--text-primary);
+  padding: 1rem 1.2rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  min-height: 60px;
+  white-space: pre-wrap;
+}
+
+/* ------------------------------------------------------------------ */
+/* Grammar highlights                                                 */
+/* ------------------------------------------------------------------ */
+.highlight-error {
+  background: var(--error-bg);
+  border-bottom: 2px solid var(--error-color);
+  border-radius: 3px;
+  padding: 0 2px;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.highlight-error:hover {
+  background: rgba(255, 107, 107, 0.22);
+}
+
+.highlight-warning {
+  background: var(--warning-bg);
+  border-bottom: 2px solid var(--warning-color);
+  border-radius: 3px;
+  padding: 0 2px;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.highlight-warning:hover {
+  background: rgba(254, 202, 87, 0.22);
+}
+
+.highlight-suggestion {
+  background: var(--suggestion-bg);
+  border-bottom: 2px solid var(--suggestion-color);
+  border-radius: 3px;
+  padding: 0 2px;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.highlight-suggestion:hover {
+  background: rgba(72, 219, 251, 0.22);
+}
+
+/* ------------------------------------------------------------------ */
+/* Corrected block                                                    */
+/* ------------------------------------------------------------------ */
+.corrected-block {
+  margin-top: 1rem;
+  position: relative;
+}
+
+.corrected-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--success-color);
+  margin-bottom: 0.4rem;
+}
+
+.result-text.corrected {
+  border-color: rgba(0, 210, 211, 0.15);
+}
+
+.corrected-block .btn-icon {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+/* ------------------------------------------------------------------ */
+/* Issue counts                                                       */
+/* ------------------------------------------------------------------ */
+.issue-counts {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.count-chip {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.count-chip.error {
+  background: var(--error-bg);
+  color: var(--error-color);
+}
+
+.count-chip.warning {
+  background: var(--warning-bg);
+  color: var(--warning-color);
+}
+
+.count-chip.suggestion {
+  background: var(--suggestion-bg);
+  color: var(--suggestion-color);
+}
+
+.count-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.count-chip.error .count-dot {
+  background: var(--error-color);
+}
+
+.count-chip.warning .count-dot {
+  background: var(--warning-color);
+}
+
+.count-chip.suggestion .count-dot {
+  background: var(--suggestion-color);
+}
+
+/* ------------------------------------------------------------------ */
+/* Issues list                                                        */
+/* ------------------------------------------------------------------ */
+.issues-list {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.issue-card {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  border-left: 3px solid;
+  background: rgba(0, 0, 0, 0.15);
+  transition: background var(--transition);
+}
+
+.issue-card:hover {
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.issue-card.error {
+  border-left-color: var(--error-color);
+}
+
+.issue-card.warning {
+  border-left-color: var(--warning-color);
+}
+
+.issue-card.suggestion {
+  border-left-color: var(--suggestion-color);
+}
+
+.issue-message {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.issue-replacements {
+  margin-top: 0.35rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.replacement-chip {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.15rem 0.55rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--success-color);
+  border: 1px solid rgba(0, 210, 211, 0.15);
+}
+
+/* ------------------------------------------------------------------ */
+/* Icon button                                                        */
+/* ------------------------------------------------------------------ */
+.btn-icon {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-glass);
+  border-radius: 8px;
+  padding: 0.4rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-icon:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+/* ------------------------------------------------------------------ */
+/* Loading overlay                                                    */
+/* ------------------------------------------------------------------ */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 14, 26, 0.82);
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  z-index: 100;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid rgba(255, 255, 255, 0.08);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-overlay p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* ------------------------------------------------------------------ */
+/* Section divider                                                    */
+/* ------------------------------------------------------------------ */
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0.25rem 0;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+}
+
+.divider-text {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* ------------------------------------------------------------------ */
+/* Text input section                                                 */
+/* ------------------------------------------------------------------ */
+.text-input {
+  width: 100%;
+  min-height: 120px;
+  padding: 1rem 1.2rem;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: var(--font);
+  font-size: 1rem;
+  line-height: 1.7;
+  resize: vertical;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.text-input::placeholder {
+  color: var(--text-muted);
+}
+
+.text-input:focus {
+  outline: none;
+  border-color: rgba(108, 92, 231, 0.4);
+  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+}
+
+.char-count {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.text-input-actions {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 0.8rem;
+}
+
+/* Primary button */
+.btn-primary {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, #6c5ce7, #a78bfa);
+  color: #fff;
+  font-family: var(--font);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform var(--transition), box-shadow var(--transition), opacity var(--transition);
+  box-shadow: 0 2px 12px var(--accent-glow);
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px var(--accent-glow);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn-primary:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Secondary button */
+.btn-secondary {
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+  font-family: var(--font);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+}
+
+/* ------------------------------------------------------------------ */
+/* Utility                                                            */
+/* ------------------------------------------------------------------ */
+.hidden {
+  display: none !important;
+}
+
+/* ------------------------------------------------------------------ */
+/* Responsive                                                         */
+/* ------------------------------------------------------------------ */
+@media (max-width: 600px) {
+  main {
+    padding: 2rem 1rem 3rem;
+  }
+
+  .logo h1 {
+    font-size: 1.4rem;
+  }
+
+  .waveform-ring-wrap {
+    width: 180px;
+    height: 180px;
+  }
+
+  .btn-record {
+    width: 80px;
+    height: 80px;
+  }
+
+  .card.glass {
+    padding: 1.1rem;
+  }
+
+  .timer {
+    font-size: 1.5rem;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Section reveal animation                                           */
+/* ------------------------------------------------------------------ */
+.card.glass {
+  animation: card-in 0.5s ease-out both;
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#transcription-section {
+  animation-delay: 0.05s;
+}
+
+#grammar-section {
+  animation-delay: 0.1s;
+}
+
+/* No-issues state */
+.no-issues {
+  text-align: center;
+  padding: 1.5rem;
+  color: var(--success-color);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.no-issues svg {
+  display: block;
+  margin: 0 auto 0.5rem;
+}

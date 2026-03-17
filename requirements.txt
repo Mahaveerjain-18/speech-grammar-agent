@@ -1,0 +1,4 @@
+flask
+faster-whisper
+language-tool-python
+pydub

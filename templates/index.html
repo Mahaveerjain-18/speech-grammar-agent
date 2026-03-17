@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Speech Grammar Agent — Offline</title>
+  <meta name="description"
+    content="Offline speech-to-text with real-time grammar correction powered by Whisper and LanguageTool." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+
+<body>
+  <!-- Animated background blobs -->
+  <div class="bg-blob blob-1"></div>
+  <div class="bg-blob blob-2"></div>
+  <div class="bg-blob blob-3"></div>
+
+  <main>
+    <!-- Header -->
+    <header id="app-header">
+      <div class="logo">
+        <span class="logo-icon">🎙️</span>
+        <h1>Speech Grammar Agent</h1>
+      </div>
+      <p class="subtitle">Fully offline · Powered by Whisper + LanguageTool</p>
+    </header>
+
+    <!-- Record Section -->
+    <section id="recorder-section" class="card glass">
+      <div class="card-header">
+        <h2>Record Your Speech</h2>
+        <span id="status-badge" class="badge idle">Ready</span>
+      </div>
+
+      <!-- Waveform ring + record button combo -->
+      <div class="recorder-stage">
+        <div class="waveform-ring-wrap">
+          <!-- Circular glow behind the button when recording -->
+          <div class="ring-glow"></div>
+          <!-- Frequency bars arranged in a circle -->
+          <canvas id="waveform-ring" width="240" height="240"></canvas>
+          <!-- The record button sits at the centre -->
+          <button id="record-btn" class="btn-record" aria-label="Start recording">
+            <span class="mic-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                <line x1="12" y1="19" x2="12" y2="23" />
+                <line x1="8" y1="23" x2="16" y2="23" />
+              </svg>
+            </span>
+            <span class="stop-icon hidden">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="6" y="6" width="12" height="12" rx="2" />
+              </svg>
+            </span>
+            <span class="pulse-ring"></span>
+            <span class="pulse-ring delay"></span>
+          </button>
+        </div>
+
+        <!-- Info beneath the ring -->
+        <div class="recorder-info">
+          <div id="timer" class="timer">00:00</div>
+          <p id="recorder-hint" class="recorder-hint">Tap to start recording</p>
+        </div>
+      </div>
+
+      <!-- Linear waveform bars -->
+      <div class="waveform-bar-wrap">
+        <canvas id="waveform-bars" width="680" height="64"></canvas>
+      </div>
+    </section>
+
+    <!-- Divider with "or" -->
+    <div class="section-divider">
+      <span class="divider-line"></span>
+      <span class="divider-text">or</span>
+      <span class="divider-line"></span>
+    </div>
+
+    <!-- Text Input Section -->
+    <section id="text-input-section" class="card glass">
+      <div class="card-header">
+        <h2>✏️ Type Your Text</h2>
+        <span id="char-count" class="char-count">0 characters</span>
+      </div>
+      <textarea id="text-input" class="text-input" placeholder="Type or paste your text here to check grammar…"
+        rows="5"></textarea>
+      <div class="text-input-actions">
+        <button id="check-grammar-btn" class="btn-primary" disabled>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <polyline points="22 4 12 14.01 9 11.01" />
+          </svg>
+          Check Grammar
+        </button>
+        <button id="clear-text-btn" class="btn-secondary hidden">Clear</button>
+      </div>
+    </section>
+
+    <!-- Transcription Section -->
+    <section id="transcription-section" class="card glass hidden">
+      <div class="card-header">
+        <h2>📝 Transcription</h2>
+        <button id="copy-transcript-btn" class="btn-icon" title="Copy text">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" />
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+          </svg>
+        </button>
+      </div>
+      <div id="transcript-text" class="result-text"></div>
+    </section>
+
+    <!-- Grammar Section -->
+    <section id="grammar-section" class="card glass hidden">
+      <div class="card-header">
+        <h2>✅ Grammar Analysis</h2>
+        <div class="issue-counts" id="issue-counts"></div>
+      </div>
+
+      <!-- Highlighted text -->
+      <div id="highlighted-text" class="result-text highlighted"></div>
+
+      <!-- Corrected text -->
+      <div id="corrected-block" class="corrected-block hidden">
+        <div class="corrected-label">Corrected Version</div>
+        <div id="corrected-text" class="result-text corrected"></div>
+        <button id="copy-corrected-btn" class="btn-icon" title="Copy corrected text">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" />
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Issue list -->
+      <div id="issues-list" class="issues-list"></div>
+    </section>
+
+    <!-- Loading overlay -->
+    <div id="loading-overlay" class="loading-overlay hidden">
+      <div class="spinner"></div>
+      <p id="loading-text">Processing…</p>
+    </div>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+
+</html>
