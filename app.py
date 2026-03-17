@@ -1,6 +1,18 @@
 import os
 import tempfile
 import logging
+
+# ---------------------------------------------------------------------------
+# Model cache — use Render's persistent disk when available, else ~/.cache
+# ---------------------------------------------------------------------------
+_CACHE_DIR = os.environ.get(
+    "MODEL_CACHE_DIR",
+    os.path.join(os.path.expanduser("~"), ".cache", "speech-grammar-agent"),
+)
+os.makedirs(_CACHE_DIR, exist_ok=True)
+
+# Tell LanguageTool where to store its downloaded files
+os.environ.setdefault("LANGUAGE_TOOL_HOME", os.path.join(_CACHE_DIR, "languagetool"))
 from flask import Flask, request, jsonify, render_template
 
 logging.basicConfig(level=logging.INFO)
@@ -21,7 +33,14 @@ def get_whisper_model():
     if _whisper_model is None:
         logger.info("Loading Whisper model (small) — first run downloads ~500 MB …")
         from faster_whisper import WhisperModel
-        _whisper_model = WhisperModel("small", device="cpu", compute_type="int8")
+        whisper_cache = os.path.join(_CACHE_DIR, "whisper")
+        os.makedirs(whisper_cache, exist_ok=True)
+        _whisper_model = WhisperModel(
+            "small",
+            device="cpu",
+            compute_type="int8",
+            download_root=whisper_cache,
+        )
         logger.info("Whisper model loaded ✓")
     return _whisper_model
 
